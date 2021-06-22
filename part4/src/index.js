@@ -27,19 +27,8 @@ app.use('/api/blogs', blogsRouter);
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
 
-// app.get('/', (request, response) => {
-//   Blog.find({}).then(blogs => {
-//     response.json(blogs);
-//   });
-// });
-
-// app.post('/', (request, response) => {
-//   const blog = new Blog(request.body);
-//   blog.save().then(result => {
-//     response.status(201).json(result);
-//   });
-// });
-
 app.listen(config.PORT, () => {
   logger.info(`Server running on port ${config.PORT}`);
 });
+
+module.exports = app;

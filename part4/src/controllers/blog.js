@@ -11,6 +11,13 @@ blogsRouter.get('/', (request, response) => {
 
 blogsRouter.post('/', (request, response) => {
   const blog = new Blog(request.body);
+  if (blog['likes'] === undefined) {
+    blog['likes'] = 0;
+  }
+  if (blog['title'] === undefined && blog['url'] === undefined) {
+    console.log('return 400 error');
+    response.status(400).json({ error: error.message });
+  }
   blog
     .save()
     .then(result => {
