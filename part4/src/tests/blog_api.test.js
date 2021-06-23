@@ -40,6 +40,8 @@ beforeEach(async () => {
   await blogObject.save();
   blogObject = new Blog(initialBlogs[1]);
   await blogObject.save();
+  token =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QyIiwiaWQiOiI2MGQzYTdmMmI2MjRmODRhYTEyNGI2YWQiLCJpYXQiOjE2MjQ0ODc3NTQsImV4cCI6MTYyNDQ5MTM1NH0.8LGSioBBUntrkjKcBQJ9lOYnLTDUWHU0_XBjs4t5UDk';
 });
 
 test('Blog List Test Step 1', async () => {
@@ -62,7 +64,10 @@ test('Blog List Test Step 3', async () => {
     likes: 7
   };
   const blogsAtStart = await api.get('/api/blogs');
-  await api.post('/api/blogs').send(newBlog);
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .set('Authorization', `bearer ${token}`);
   const blogsAtEnd = await api.get('/api/blogs');
   expect(blogsAtEnd.body.length).toEqual(blogsAtStart.body.length + 1);
 });
@@ -74,7 +79,10 @@ test('Blog List Test Step 4', async () => {
     author: 'Michael Chan',
     url: 'https://reactpatterns.com/'
   };
-  await api.post('/api/blogs').send(newBlog);
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .set('Authorization', `bearer ${token}`);
   const blogsAtEnd = await api.get('/api/blogs');
   const lastBlog = blogsAtEnd.body[blogsAtEnd.body.length - 1];
   expect(lastBlog.likes).toBe(0);
@@ -85,8 +93,26 @@ test('Blog List Test Step 5', async () => {
     _id: '5a422a851b54a676234d17f1',
     author: 'Michael Chan'
   };
-  const response = await api.post('/api/blogs').send(newBlog);
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .set('Authorization', `bearer ${token}`);
   expect(response.status).toBe(400);
+});
+
+test('Blog List Expansion Step 11', async () => {
+  const newBlog = {
+    _id: '5a422a851b54a676234d17f1',
+    author: 'Michael Chan',
+    url: '',
+    likes: 1,
+    title: 'test'
+  };
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .set('Authorization', `bearer invalid`);
+  expect(response.status).toBe(401);
 });
 
 afterAll(() => {
