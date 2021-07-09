@@ -4,10 +4,10 @@ const Form = ({ newBlogTitle, newBlogUrl, handleBlogTitleChange, handleBlogUrlCh
   return (
     <form onSubmit={addBlog}>
       <div>
-        <input placeholder="Title" value={newBlogTitle} onChange={handleBlogTitleChange} />
+        <input placeholder="Title" id="title" value={newBlogTitle} onChange={handleBlogTitleChange} />
       </div>
       <div>
-        <input placeholder="URL" value={newBlogUrl} onChange={handleBlogUrlChange} />
+        <input placeholder="URL" id="URL" value={newBlogUrl} onChange={handleBlogUrlChange} />
       </div>
       <div>
         <button type="submit">Create</button>

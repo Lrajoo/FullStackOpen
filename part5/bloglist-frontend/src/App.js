@@ -88,13 +88,27 @@ const App = () => {
     <form onSubmit={handleLogin}>
       <div>
         username
-        <input type="text" value={username} name="Username" onChange={({ target }) => setUsername(target.value)} />
+        <input
+          type="text"
+          value={username}
+          name="Username"
+          id="username"
+          onChange={({ target }) => setUsername(target.value)}
+        />
       </div>
       <div>
         password
-        <input type="password" value={password} name="Password" onChange={({ target }) => setPassword(target.value)} />
+        <input
+          type="password"
+          value={password}
+          name="Password"
+          id="password"
+          onChange={({ target }) => setPassword(target.value)}
+        />
       </div>
-      <button type="submit">login</button>
+      <button type="submit" id="login">
+        login
+      </button>
     </form>
   );
 
@@ -126,7 +140,11 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       {user === null && loginForm()}
-      {!formVisible && user !== null && <button onClick={showForm}>create new blog</button>}
+      {!formVisible && user !== null && (
+        <button id="createNewBlog" onClick={showForm}>
+          create new blog
+        </button>
+      )}
       {formVisible && (
         <Form
           newBlogTitle={newBlogTitle}
@@ -147,7 +165,7 @@ const App = () => {
       {blogs
         .sort((a, b) => a.likes - b.likes)
         .map(blog => {
-          return <Blog key={blog.id} blog={blog} user={user} likeBlog={likeBlog} />;
+          return <Blog id="blogs" key={blog.id} blog={blog} user={user} likeBlog={likeBlog} />;
         })}
     </div>
   );
