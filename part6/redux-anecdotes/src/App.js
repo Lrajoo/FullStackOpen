@@ -1,20 +1,25 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import reducer from './reducers/anecdoteReducer';
-import { createStore } from 'redux';
+import React, { useEffect } from 'react';
 import AnecdoteForm from './components/AnecdoteForm';
 import AnecdoteList from './components/AnecdoteList';
-
-const store = createStore(reducer);
+import Notification from './components/Notification';
+import Filter from './components/Filter';
+import { initializeAnecdotes } from './reducers/anecdoteReducer';
+import { useDispatch } from 'react-redux';
 
 const App = () => {
-  const anecdotes = useSelector(state => state);
   const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(initializeAnecdotes());
+  }, [dispatch]);
 
   return (
     <div>
-      <AnecdoteList anecdotes={anecdotes} />
+      <h2>create new</h2>
       <AnecdoteForm />
+      <h2>Anecdotes</h2>
+      <Notification />
+      <Filter />
+      <AnecdoteList />
     </div>
   );
 };

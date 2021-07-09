@@ -1,36 +1,39 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { vote } from '../reducers/anecdoteReducer';
+import { setNotification } from '../reducers/notificationReducer';
 
-const generateId = () => Math.floor(Math.random() * 1000000);
-
-const AnecdoteList = props => {
+const Anecdote = ({ anecdote }) => {
   const dispatch = useDispatch();
 
-  const vote = id => {
-    dispatch({
-      type: 'VOTE',
-      data: {
-        id: id
-      }
-    });
+  const voteHandler = () => {
+    dispatch(vote(anecdote));
+    dispatch(setNotification(`You voted for '${anecdote.content}'`, 5));
   };
 
   return (
-    <>
-      <h2>Anecdotes</h2>
-      {props.anecdotes
-        .sort((a, b) => a.votes - b.votes)
-        .map(anecdote => (
-          <div key={anecdote.id}>
-            <div>{anecdote.content}</div>
-            <div>
-              has {anecdote.votes}
-              <button onClick={() => vote(anecdote.id)}>vote</button>
-            </div>
-          </div>
-        ))}
-    </>
+    <div>
+      <div>{anecdote.content}</div>
+      <div>
+        has {anecdote.votes}
+        <button onClick={voteHandler}>vote</button>
+      </div>
+    </div>
   );
+};
+
+const AnecdoteList = () => {
+  const anecdotes = useSelector(({ filter, anecdotes }) => {
+    if (filter === null) {
+      return anecdotes;
+    }
+    const regex = new RegExp(filter, 'i');
+    return anecdotes.filter(anecdote => anecdote.content.match(regex));
+  });
+
+  return anecdotes
+    .sort((a, b) => a.votes - b.votes)
+    .map(anecdote => <Anecdote key={anecdote.id} anecdote={anecdote} />);
 };
 
 export default AnecdoteList;
