@@ -108,6 +108,20 @@ const App = () => {
     setFormVisible(true);
   };
 
+  const likeBlog = async (blog, user) => {
+    const blogObject = {
+      title: blog.title,
+      url: blog.url,
+      author: user.name,
+      likes: (blog.likes += 1)
+    };
+    try {
+      await blogService.update(blog.id, blogObject);
+    } catch (exception) {
+      console.log('error when liking a blog');
+    }
+  };
+
   return (
     <div>
       <h2>blogs</h2>
@@ -133,7 +147,7 @@ const App = () => {
       {blogs
         .sort((a, b) => a.likes - b.likes)
         .map(blog => {
-          return <Blog key={blog.id} blog={blog} user={user} />;
+          return <Blog key={blog.id} blog={blog} user={user} likeBlog={likeBlog} />;
         })}
     </div>
   );

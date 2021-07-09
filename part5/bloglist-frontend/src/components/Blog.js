@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import blogService from '../services/blogs';
 import PropTypes from 'prop-types';
 
-const Blog = ({ blog, user }) => {
+const Blog = ({ blog, user, likeBlog }) => {
   const [blogVisible, setBlogVisible] = useState(false);
 
   const showBlog = () => {
@@ -11,20 +11,6 @@ const Blog = ({ blog, user }) => {
 
   const hideBlog = () => {
     setBlogVisible(false);
-  };
-
-  const likeBlog = async (blog, user) => {
-    const blogObject = {
-      title: blog.title,
-      url: blog.url,
-      author: user.name,
-      likes: (blog.likes += 1)
-    };
-    try {
-      await blogService.update(blog.id, blogObject);
-    } catch (exception) {
-      console.log('error when liking a blog');
-    }
   };
 
   const removeBlog = async blog => {
@@ -42,16 +28,17 @@ const Blog = ({ blog, user }) => {
     borderWidth: 1,
     marginBottom: 5
   };
-
   return (
     <>
-      <div style={blogStyle}>
-        {blog.title} {blog.author}{' '}
+      <div style={blogStyle} className="blog">
+        <span className="blogTitleAuthor">
+          {blog.title} {blog.author}
+        </span>
         {blogVisible ? <button onClick={hideBlog}>hide</button> : <button onClick={showBlog}>view</button>}
       </div>
       {blogVisible && (
         <>
-          <div>
+          <div className="blogLikes">
             likes {blog.likes} <button onClick={() => likeBlog(blog, user)}>like</button>
           </div>
           <div>{user.name}</div>
