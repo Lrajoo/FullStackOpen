@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Blog from './components/Blog';
+import Form from './components/Form';
 import blogService from './services/blogs';
 import loginService from './services/login';
 
@@ -12,6 +13,7 @@ const App = () => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [newBlogTitle, setBlogTitleChange] = useState('');
   const [newBlogUrl, setBlogUrlChange] = useState('');
+  const [formVisible, setFormVisible] = useState(false);
 
   useEffect(() => {
     blogService.getAll().then(blogs => setBlogs(blogs));
@@ -28,7 +30,6 @@ const App = () => {
 
   const handleLogin = async event => {
     event.preventDefault();
-    console.log('logging in with', username, password);
     try {
       const user = await loginService.login({
         username,
@@ -71,9 +72,11 @@ const App = () => {
     };
 
     blogService.create(blogObject).then(returnedBlog => {
+      console.log('successfully created blog');
       setBlogs(blogs.concat(returnedBlog));
       setBlogTitleChange('');
       setBlogUrlChange('');
+      setFormVisible(false);
     });
     setSuccessMessage(`a new blog ${newBlogTitle} by ${user.name}`);
     setTimeout(() => {
@@ -95,19 +98,31 @@ const App = () => {
     </form>
   );
 
-  const blogForm = () => (
-    <form onSubmit={addBlog}>
-      <input value={newBlogTitle} onChange={handleBlogTitleChange} />
-      <input value={newBlogUrl} onChange={handleBlogUrlChange} />
-      <button type="submit">save</button>
-    </form>
-  );
+  const handleCancelBlog = () => {
+    setBlogTitleChange('');
+    setBlogUrlChange('');
+    setFormVisible(false);
+  };
+
+  const showForm = () => {
+    setFormVisible(true);
+  };
 
   return (
     <div>
-      {user === null && loginForm()}
-      {user !== null && blogForm()}
       <h2>blogs</h2>
+      {user === null && loginForm()}
+      {!formVisible && user !== null && <button onClick={showForm}>create new blog</button>}
+      {formVisible && (
+        <Form
+          newBlogTitle={newBlogTitle}
+          newBlogUrl={newBlogUrl}
+          handleBlogTitleChange={handleBlogTitleChange}
+          handleBlogUrlChange={handleBlogUrlChange}
+          handleCancelBlog={handleCancelBlog}
+          addBlog={addBlog}
+        />
+      )}
       {errorMessage && <div className="errorMessage">{errorMessage}</div>}
       {successMessage && <div className="successMessage">{successMessage}</div>}
       {user !== null && (
@@ -115,9 +130,11 @@ const App = () => {
           {user.name} logged in<button onClick={handleLogout}>logout</button>
         </div>
       )}
-      {blogs.map(blog => {
-        return <Blog key={blog.id} blog={blog} />;
-      })}
+      {blogs
+        .sort((a, b) => a.likes - b.likes)
+        .map(blog => {
+          return <Blog key={blog.id} blog={blog} user={user} />;
+        })}
     </div>
   );
 };
