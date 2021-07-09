@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import blogService from '../services/blogs';
+import PropTypes from 'prop-types';
 
 const Blog = ({ blog, user }) => {
   const [blogVisible, setBlogVisible] = useState(false);
@@ -59,6 +60,11 @@ const Blog = ({ blog, user }) => {
       )}
     </>
   );
+};
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired
 };
 
 export default Blog;
